@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reading Order</title>
+<style>
+:root {
+  --bg: #faf9f6; --surface: #ffffff; --ink: #1f1f1e; --muted: #5f5e58; --rule: #e4e3dd;
+  --accent: #2a78d6; --code-bg: #f1f0ea; --pre-bg: #1e1e1c; --pre-ink: #ecebe6; --mark: #fff4d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141413; --surface: #1c1c1b; --ink: #ecebe6; --muted: #a8a79f; --rule: #33332f;
+    --accent: #6da7ec; --code-bg: #2a2a27; --pre-bg: #0f0f0e; --pre-ink: #ecebe6; --mark: #3a3320;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141413; --surface: #1c1c1b; --ink: #ecebe6; --muted: #a8a79f; --rule: #33332f;
+  --accent: #6da7ec; --code-bg: #2a2a27; --pre-bg: #0f0f0e; --pre-ink: #ecebe6; --mark: #3a3320;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif; }
+.layout { display: grid; grid-template-columns: 290px minmax(0, 1fr); max-width: 1280px; margin: 0 auto; }
+nav { position: sticky; top: 0; height: 100vh; overflow-y: auto; padding: 28px 16px 40px 24px;
+  border-right: 1px solid var(--rule); font-size: 13.5px; line-height: 1.45; }
+nav .brand { font-weight: 700; font-size: 15px; margin: 0 0 4px; }
+nav .sub { color: var(--muted); margin: 0 0 18px; font-size: 12.5px; }
+nav .nav-h { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; font-weight: 700;
+  color: var(--muted); margin: 22px 0 6px; }
+nav ol { list-style: none; margin: 0; padding: 0; }
+nav ol ol { padding-left: 12px; border-left: 1px solid var(--rule); margin: 2px 0 6px 4px; }
+nav ol ol a { color: var(--muted); }
+nav li { margin: 3px 0; }
+nav a { color: var(--ink); text-decoration: none; }
+nav a:hover, nav a.active { color: var(--accent); }
+main { padding: 40px 56px 120px; min-width: 0; }
+article { max-width: 860px; }
+h1 { font-size: 34px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.01em; }
+.lede { color: var(--muted); margin: 0 0 28px; }
+h2 { font-size: 25px; margin: 56px 0 12px; padding-top: 18px; border-top: 1px solid var(--rule); letter-spacing: -.005em; }
+h3 { font-size: 19px; margin: 34px 0 8px; }
+h4 { font-size: 16.5px; margin: 26px 0 6px; }
+p, li { max-width: 76ch; }
+a { color: var(--accent); }
+strong { font-weight: 650; }
+code { font: 0.88em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--code-bg);
+  padding: .12em .38em; border-radius: 5px; overflow-wrap: anywhere; }
+pre { position: relative; background: var(--pre-bg); color: var(--pre-ink); border-radius: 10px;
+  padding: 16px 18px; overflow-x: auto; font-size: 13.5px; line-height: 1.55; margin: 14px 0 20px; }
+pre code { background: none; padding: 0; color: inherit; font-size: inherit; overflow-wrap: normal; white-space: pre; }
+.copy { position: absolute; top: 8px; right: 8px; border: 1px solid #3c3c38; background: #2a2a27; color: #ecebe6;
+  font-size: 12px; border-radius: 6px; padding: 3px 9px; cursor: pointer; opacity: .75; }
+.copy:hover { opacity: 1; }
+.tablewrap { overflow-x: auto; margin: 14px 0 22px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+th { font-weight: 650; background: var(--code-bg); }
+tr:last-child td { border-bottom: 0; }
+blockquote { margin: 16px 0; padding: 12px 18px; background: var(--mark); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; }
+blockquote p { margin: 0; }
+.formula { font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 10px; padding: 14px 18px; margin: 14px 0; text-align: center; }
+figure { margin: 18px 0 26px; }
+figure img { width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 10px; background: #fff; }
+figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; }
+.part-banner { margin-top: 72px; padding: 22px 24px; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; }
+.part-banner h1 { font-size: 28px; }
+.part-banner p { margin: 4px 0 0; color: var(--muted); }
+.theme { position: fixed; right: 16px; bottom: 16px; border: 1px solid var(--rule); background: var(--surface);
+  color: var(--ink); border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+.menu { display: none; }
+@media (max-width: 900px) {
+  .layout { display: block; }
+  nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); padding: 16px; display: none; }
+  nav.open { display: block; }
+  .menu { display: block; position: sticky; top: 0; z-index: 5; width: 100%; text-align: left; padding: 12px 16px;
+    background: var(--surface); border: 0; border-bottom: 1px solid var(--rule); color: var(--ink); font-size: 14px; font-weight: 600; }
+  main { padding: 24px 16px 96px; }
+  h1 { font-size: 27px; }
+  h2 { font-size: 22px; }
+}
+@media print { nav, .menu, .theme, .copy { display: none !important; } .layout { display: block; } main { padding: 0; } }
+
+nav .series { list-style: none; margin: 0 0 6px; padding: 0; }
+nav .series li { margin: 4px 0; }
+nav .series a.cur { font-weight: 700; color: var(--accent); }
+.seriesbar { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 13.5px; padding: 10px 14px;
+  background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; margin: 0 0 22px; }
+.seriesbar b { font-weight: 650; }
+.nextcard { margin: 64px 0 0; padding: 20px 22px; background: var(--surface); border: 1px solid var(--rule);
+  border-left: 4px solid var(--accent); border-radius: 10px; }
+.nextcard p { margin: 4px 0; }
+.nextcard a.big { font-size: 18px; font-weight: 650; }
+</style>
+</head>
+<body>
+<button class="menu" onclick="document.querySelector('nav').classList.toggle('open')">☰ Contents</button>
+<div class="layout">
+<nav>
+  <p class="brand">Reading Order</p>
+  <p class="sub">Start here · the whole learning path</p>
+  <p class="nav-h">The series</p><ol class="series"><li><a class="cur" href="#">Reading Order (start here)</a></li><li><a class="" href="inference-bench-lab/WALKTHROUGH.html">Guide 1 · Inference Benchmark Lab (one GPU)</a></li><li><a class="" href="disagg-rdma-lab/SRIOV_GUIDE.html">Guide 2 · SR-IOV on Linux and Kubernetes</a></li><li><a class="" href="disagg-rdma-lab/WALKTHROUGH.html">Guide 3 · Disaggregated Serving over RDMA</a></li></ol>
+  <p class="nav-h">Walkthrough</p><ol><li><a href="#the-path-at-a-glance">The path at a glance</a></li><li><a href="#stage-by-stage">Stage by stage</a><ol><li><a href="#stage-1-how-inference-works">Stage 1: How inference works</a></li><li><a href="#stage-2-the-tools-on-your-laptop">Stage 2: The tools, on your laptop</a></li><li><a href="#stage-3-inside-a-real-engine">Stage 3: Inside a real engine</a></li><li><a href="#stage-4-one-gpu-real-numbers">Stage 4: One GPU, real numbers</a></li><li><a href="#stage-5-write-it-up-practise">Stage 5: Write it up, practise</a></li><li><a href="#stage-6-networking-from-the-hardware-up">Stage 6: Networking from the hardware up</a></li><li><a href="#stage-7-kubernetes-networking">Stage 7: Kubernetes networking</a></li><li><a href="#stage-8-disaggregation-on-your-laptop">Stage 8: Disaggregation, on your laptop</a></li><li><a href="#stage-9-the-cluster-lab">Stage 9: The cluster lab</a></li><li><a href="#stage-10-interview-ready">Stage 10: Interview-ready</a></li></ol></li><li><a href="#use-any-time">Use any time</a></li><li><a href="#rules-that-make-it-stick">Rules that make it stick</a></li></ol>
+</nav>
+<main>
+<article>
+<div class="seriesbar"><b>Reading Order (start here)</b><a href="inference-bench-lab/WALKTHROUGH.html">Start with Guide 1: Inference Benchmark Lab &rarr;</a></div>
+<h1>Reading Order: LLM Inference and Infrastructure Learning Path</h1>
+<p class="lede">Which part of which guide to read next, where each video fits, and when you're done with each stage.</p>
+<p>Read the three guides in this order: Project 1 (one GPU) first, then the SR-IOV deep dive's Linux half, then Project 2 (multi-node), dipping into the SR-IOV guide's Kubernetes half right before you touch a cluster. Watch each video at the point it's listed, not before.</p>
+<h2 id="the-path-at-a-glance">The path at a glance</h2>
+<p>The three guides: <a href="inference-bench-lab/WALKTHROUGH.html">Project 1: Inference Benchmark Lab</a> (P1), <a href="disagg-rdma-lab/SRIOV_GUIDE.html">SR-IOV on Linux and Kubernetes</a> (SR), and <a href="disagg-rdma-lab/WALKTHROUGH.html">Project 2: Disaggregated Serving over RDMA</a> (P2). P1 and P2 also live as <code>WALKTHROUGH.html</code> in <code>~/code/inference-bench-lab</code> and <code>~/code/disagg-rdma-lab</code>.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Stage</th>
+<th>Read and do</th>
+<th>Where</th>
+<th>Time</th>
+<th>Done when you can...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>How inference works</td>
+<td>P1 How to use + Part 1; two videos</td>
+<td>anywhere</td>
+<td>1 weekend</td>
+<td>explain prefill vs decode, the KV cache and capacity at SLO without notes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>The tools, on your laptop</td>
+<td>P1 Part 2, Steps 1–3, Part 4</td>
+<td>Mac</td>
+<td>1–2 evenings</td>
+<td>run the mock lab and read its knee chart</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Inside a real engine</td>
+<td>2 engine videos</td>
+<td>anywhere</td>
+<td>1 weekend</td>
+<td>name what vLLM's scheduler and KV cache manager do each step</td>
+</tr>
+<tr>
+<td>4</td>
+<td>One GPU, real numbers</td>
+<td>P1 GPU setup, Steps 4–12</td>
+<td>1 GPU</td>
+<td>2–4 weeks</td>
+<td>state one finding per experiment with its mechanism</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Write it up, practise</td>
+<td>P1 Step 14, Parts 5–6</td>
+<td>anywhere</td>
+<td>2–3 days</td>
+<td>tell the project story in 2 minutes</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Networking from the hardware up</td>
+<td>P2 Part 1; SR Parts 1–5 (Lab A)</td>
+<td>laptop VM</td>
+<td>1–2 weeks</td>
+<td>create VFs by hand and explain PF, VF, eSwitch, IOMMU</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Kubernetes networking</td>
+<td>SR Parts 6–8 (Lab B)</td>
+<td>laptop VM</td>
+<td>1 week</td>
+<td>say what each of the 9 pod start-up steps does</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Disaggregation, on your laptop</td>
+<td>P2 Parts 2–4, Step 0, Part 6</td>
+<td>Mac</td>
+<td>1 week</td>
+<td>explain when P/D wins and what eats the gain</td>
+</tr>
+<tr>
+<td>9</td>
+<td>The cluster lab</td>
+<td>SR Parts 9–11; P2 Steps 1–16</td>
+<td>2+ GPU nodes</td>
+<td>3–5 weeks</td>
+<td>show a measured P/D, RDMA vs TCP and Mooncake finding</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Interview-ready</td>
+<td><a href="inference-bench-lab/WALKTHROUGH.html#part-6-interview-questions-and-model-answers">P1 Part 6</a>, <a href="disagg-rdma-lab/WALKTHROUGH.html#part-7-interview-questions-and-model-answers">P2 Part 7</a>, <a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-12-interview-questions-and-model-answers">SR Part 12</a>, out loud</td>
+<td>anywhere</td>
+<td>ongoing</td>
+<td>answer every question in the shape: mechanism, number, trade-off, how measured</td>
+</tr>
+</tbody>
+</table>
+<p>Times assume evenings and weekends. Stages 6–8 need no GPUs, so you can do them while you wait for cluster access.</p>
+<h2 id="stage-by-stage">Stage by stage</h2>
+<p>Work down this list in order. Each item is one sitting.</p>
+<h3 id="stage-1-how-inference-works">Stage 1: How inference works</h3>
+<ol>
+<li>Optional warm-up: <a href="https://www.youtube.com/watch?v=6cx2tTcSHmg">How LLM Inference Actually Scales</a> (≈35 min), the whole story in one sitting.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#how-to-use-this-guide">P1, <em>How to use this guide</em></a>: the restaurant picture and the glossary.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#11-a-request-has-two-phases">P1, Part 1.1–1.3</a> (two phases, KV cache, batching), with NVIDIA's <a href="https://developer.nvidia.com/blog/mastering-llm-techniques-inference-optimization/">Mastering LLM Techniques: Inference Optimization</a> (KV cache through PagedAttention) open beside it.</li>
+<li>Watch <a href="https://www.youtube.com/watch?v=T4SRu-trimA">How does an LLM server handle millions of requests at the same time?</a> (≈41 min) in full.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#14-parallelism-splitting-a-model-across-gpus">P1, Part 1.4–1.7</a> (parallelism, quantization, speculative decoding, metrics and SLOs), then <a href="inference-bench-lab/WALKTHROUGH.html#check-yourself-before-moving-on"><em>Check yourself before moving on</em></a>. Compare with <a href="inference-bench-lab/WALKTHROUGH.html#part-7-answer-key-for-check-yourself">Part 7, the answer key</a>.</li>
+</ol>
+<h3 id="stage-2-the-tools-on-your-laptop">Stage 2: The tools, on your laptop</h3>
+<ol>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#part-2-tour-of-the-repo">P1, Part 2</a> (tour of the repo), with the code open.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#step-1-install-the-harness-and-check-it-without-a-gpu">P1, Steps 1–3</a>: install, predict, smoke test on the mock server.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#part-4-reading-the-results">P1, Part 4</a> (reading the results) using your own mock charts.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#step-3-smoke-test-on-the-mock-server">The GuideLLM cross-check from Step 3</a>: a second benchmark tool should agree with the first.</li>
+</ol>
+<h3 id="stage-3-inside-a-real-engine">Stage 3: Inside a real engine</h3>
+<ol>
+<li><a href="https://www.youtube.com/watch?v=SzArjwEkvKI">The Annotated LLM Server</a>: how vLLM is organised.</li>
+<li><a href="https://www.youtube.com/watch?v=qIVzHM2FfFY">tinyserve</a>, the first ≈75 minutes, coding along: paged KV cache, prefix caching, continuous batching, chunked prefill.</li>
+</ol>
+<h3 id="stage-4-one-gpu-real-numbers">Stage 4: One GPU, real numbers</h3>
+<ol>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#gpu-before-you-start">P1, the <em>GPU setup guide</em> tab</a>, <a href="inference-bench-lab/WALKTHROUGH.html#step-4-set-up-the-gpu-machine-and-serve-one-model-by-hand">then Step 4</a> (serve one model by hand).</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#step-5-experiment-01-baseline-vllm-vs-sglang-1-gpu-8b">Steps 5–12, one experiment per sitting</a>. Before each, rewatch the matching part of the "millions of requests" video:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Before</th>
+<th>Rewatch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Step 6 (batch limits) and Step 8 (chunked prefill)</td>
+<td>7:53–10:49</td>
+</tr>
+<tr>
+<td>Step 7 (prefix caching)</td>
+<td>15:23–22:56</td>
+</tr>
+<tr>
+<td>Step 9 (parallelism), Step 10 (quantization), Step 12 (MoE)</td>
+<td>33:18–39:10</td>
+</tr>
+<tr>
+<td>Step 11 (speculative decoding)</td>
+<td>26:38–29:14</td>
+</tr>
+</tbody>
+</table>
+<ol start="3">
+<li>After each experiment: <a href="inference-bench-lab/WALKTHROUGH.html#part-4-reading-the-results">P1 Part 4 again</a>, and one finding sentence in <code>NOTES.md</code>.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#step-13-optional-extensions">Step 13 (optional extensions)</a> last, as a preview of Project 2: <a href="https://github.com/kubernetes-sigs/lws">LWS</a> and <a href="https://llm-d.ai/">llm-d</a>.</li>
+</ol>
+<h3 id="stage-5-write-it-up-practise">Stage 5: Write it up, practise</h3>
+<ol>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#step-14-publish">P1, Step 14 (publish)</a> and <a href="inference-bench-lab/WALKTHROUGH.html#part-5-turning-results-into-a-portfolio-and-a-consulting-offer">Part 5 (portfolio and consulting offer)</a>.</li>
+<li><a href="inference-bench-lab/WALKTHROUGH.html#part-6-interview-questions-and-model-answers">P1, Part 6 (interview questions)</a>, out loud, recorded once.</li>
+</ol>
+<h3 id="stage-6-networking-from-the-hardware-up">Stage 6: Networking from the hardware up</h3>
+<ol>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#how-to-use-this-guide">P2, <em>How to use this guide</em> and Part 1</a> (TCP vs RDMA, RoCE, GPUDirect, SR-IOV, Multus, the operators, NCCL/UCX/NIXL). This is the overview.</li>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-1-why-sr-iov-exists">SR, Parts 1–2</a>: why SR-IOV exists, and how it works in the hardware. This is the depth behind <a href="disagg-rdma-lab/WALKTHROUGH.html#14-sr-iov-one-nic-many-virtual-nics">P2's Part 1.4–1.6</a>.</li>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-3-preparing-a-linux-machine">SR, Parts 3–4</a>: preparing a Linux machine, and VFs by hand.</li>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-5-lab-a-sr-iov-without-hardware">SR, Part 5 (Lab A)</a>: do Part 4 for real in the QEMU VM, plus Soft-RoCE.</li>
+</ol>
+<h3 id="stage-7-kubernetes-networking">Stage 7: Kubernetes networking</h3>
+<ol>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-6-kubernetes-building-blocks">SR, Part 6:</a> the building blocks and the 9-step pod start-up diagram.</li>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-7-lab-b-kubernetes-the-manual-way">SR, Part 7 (Lab B)</a>: wire it up by hand in the VM, including 7.6 <em>Break it on purpose</em>.</li>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-8-kubernetes-the-operator-way">SR, Part 8:</a> the operator way, and how it maps to P2's <code>cluster/</code> files.</li>
+</ol>
+<h3 id="stage-8-disaggregation-on-your-laptop">Stage 8: Disaggregation, on your laptop</h3>
+<ol>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#part-2-disaggregated-serving-concepts">P2, Part 2 (disaggregation concepts)</a>, then the <a href="https://kvcache-ai.github.io/Mooncake/">Mooncake docs</a> overview and, if you like papers, its FAST '25 paper.</li>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#part-3-architecture">P2, Part 3 (architecture)</a> and <a href="disagg-rdma-lab/WALKTHROUGH.html#part-4-tour-of-the-repo">Part 4 (tour of the repo)</a>.</li>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#step-0-run-the-whole-pipeline-locally-mac-20-minutes">P2, Step 0</a> (the whole pipeline on simulated GPUs), then <a href="disagg-rdma-lab/WALKTHROUGH.html#part-6-reading-results-where-the-gains-appear-and-disappear">straight to P2, Part 6</a> to read your mock results.</li>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#step-1-predict">P2, Step 1</a> (predict with the calculator).</li>
+</ol>
+<h3 id="stage-9-the-cluster-lab">Stage 9: The cluster lab</h3>
+<ol>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-9-performance-and-placement">SR, Part 9</a> (performance and placement), right <a href="disagg-rdma-lab/WALKTHROUGH.html#step-2-check-the-hardware-on-each-gpu-node-needs-root">before P2 Step 2</a>.</li>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#step-2-check-the-hardware-on-each-gpu-node-needs-root">P2, Steps 2–5</a>: hardware checks, operators, measuring the wire. Keep <a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-11-troubleshooting-bottom-up">SR, Part 11</a> (troubleshooting) open.</li>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#step-6-secrets-and-the-bench-runner">P2, Steps 6–10</a>: bench runner, P/D by hand, experiments 02, 01, 03 and 05.</li>
+<li>Before Step 11: the <a href="https://llm-d.ai/docs/well-lit-paths/pd-disaggregation">llm-d well-lit paths</a>. <a href="disagg-rdma-lab/WALKTHROUGH.html#step-11-experiment-04-sglang-and-llm-d">Then Step 11</a>.</li>
+<li>Before Step 12: the <a href="https://github.com/kubernetes-sigs/lws">LWS README</a> and the <a href="https://docs.vllm.ai/en/stable/deployment/frameworks/lws/">vLLM LWS page</a>. <a href="disagg-rdma-lab/WALKTHROUGH.html#step-12-experiment-06-one-model-across-two-nodes-with-leaderworkerset">Then Step 12</a>.</li>
+<li>Before Steps 13–15: the Mooncake vLLM and SGLang guides linked from <a href="disagg-rdma-lab/WALKTHROUGH.html#sources">P2's Sources</a>, and <a href="https://github.com/vllm-project/guidellm">GuideLLM</a>. <a href="disagg-rdma-lab/WALKTHROUGH.html#step-13-experiment-07-nixl-vs-mooncake-does-the-transfer-library-matter">Then Steps 13–15</a>.</li>
+<li><a href="disagg-rdma-lab/SRIOV_GUIDE.html#part-10-security-and-day-2-operations">SR, Part 10</a> (security and day-2) once you've seen a policy drain a node.</li>
+<li><a href="disagg-rdma-lab/WALKTHROUGH.html#step-16-write-it-up">P2, Step 16</a> (write it up) and <a href="disagg-rdma-lab/WALKTHROUGH.html#part-6-reading-results-where-the-gains-appear-and-disappear">P2, Part 6 again</a> with real numbers.</li>
+</ol>
+<h3 id="stage-10-interview-ready">Stage 10: Interview-ready</h3>
+<p>Rotate through P1 Part 6, P2 Part 7 and SR Part 12, out loud. For each answer, check you said the mechanism, a number you measured, the trade-off, and how you measured it.</p>
+<h2 id="use-any-time">Use any time</h2>
+<p>These aren't read in order. Open them when you're stuck or need a fact.</p>
+<table>
+<thead>
+<tr>
+<th>When</th>
+<th>Open</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a concept doesn't click</td>
+<td>the <a href="https://bentoml.com/llm/">LLM Inference Handbook</a> page on it; the glossary at the top of each guide</td>
+</tr>
+<tr>
+<td>you finished a <em>Check yourself</em></td>
+<td><a href="inference-bench-lab/WALKTHROUGH.html#part-7-answer-key-for-check-yourself">P1 Part 7 (answer key)</a></td>
+</tr>
+<tr>
+<td>something breaks</td>
+<td>the Troubleshooting section of P1, P2 or SR; SR Part 11 works bottom-up through the network layers</td>
+</tr>
+<tr>
+<td>you need a number</td>
+<td><code>kv_cache_calc.py</code> (P1) and <code>kv_transfer_calc.py</code> (P2) before you look anything up</td>
+</tr>
+<tr>
+<td>you want a second opinion on a benchmark</td>
+<td>GuideLLM, against the same endpoint</td>
+</tr>
+</tbody>
+</table>
+<h2 id="rules-that-make-it-stick">Rules that make it stick</h2>
+<ul>
+<li><strong>Predict before every run.</strong> Write the number you expect, then explain the gap. This is the habit interviewers and clients notice.</li>
+<li><strong>Don't skip the laptop stages.</strong> Stages 2, 6, 7 and 8 cost nothing and make the GPU and cluster weeks several times faster.</li>
+<li><strong>One finding sentence per experiment</strong>: <em>on [hardware], for [workload] at [SLO], changing [X] moved capacity from A to B, because [mechanism]</em>. If you can't write <em>because</em>, go back a stage.</li>
+<li><strong>Pass every Check line</strong> before moving on. If one fails, that's the lesson, not a detour.</li>
+<li><strong>Stop collecting resources once you're running experiments.</strong> Doing teaches more than more watching; the videos are listed exactly where they pay off.</li>
+<li><strong>Explain it out loud weekly</strong>, in the interview shape: mechanism, number, trade-off, how you measured it.</li>
+</ul>
+
+<div class="nextcard"><p>Ready?</p><p><a class="big" href="inference-bench-lab/WALKTHROUGH.html">Start with Guide 1: Inference Benchmark Lab &rarr;</a></p></div>
+</article>
+</main>
+</div>
+<button class="theme" id="theme" title="Toggle light/dark">◐ Theme</button>
+<script>
+// Wrap tables so wide ones scroll instead of breaking the layout on phones.
+document.querySelectorAll('article table').forEach(t => {
+  const w = document.createElement('div'); w.className = 'tablewrap'; t.parentNode.insertBefore(w, t); w.appendChild(t);
+});
+// Copy buttons on code blocks.
+document.querySelectorAll('pre').forEach(pre => {
+  const b = document.createElement('button'); b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = () => { navigator.clipboard.writeText(pre.innerText.replace(/Copy(ied)?$/, '').trim()).then(() => {
+    b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); }); };
+  pre.appendChild(b);
+});
+// Theme toggle (remembered in this browser).
+const root = document.documentElement;
+try { const s = localStorage.getItem('walkthrough-theme'); if (s) root.dataset.theme = s; } catch (e) {}
+document.getElementById('theme').onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('walkthrough-theme', root.dataset.theme); } catch (e) {}
+};
+// Highlight the current section in the sidebar.
+const links = new Map([...document.querySelectorAll('nav a')].map(a => [a.getAttribute('href').slice(1), a]));
+const obs = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { document.querySelectorAll('nav a.active').forEach(a => a.classList.remove('active'));
+    const a = links.get(e.target.id); if (a) a.classList.add('active'); }
+}), { rootMargin: '0px 0px -75% 0px' });
+document.querySelectorAll('article h2[id], article h3[id]').forEach(h => obs.observe(h));
+// Close the mobile menu after picking a section.
+document.querySelectorAll('nav a').forEach(a => a.addEventListener('click', () => document.querySelector('nav').classList.remove('open')));
+</script>
+</body>
+</html>
